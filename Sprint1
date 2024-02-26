@@ -1,0 +1,340 @@
+class Producto:
+    """
+    Clase que representa un producto en el inventario.
+
+    Atributos:
+        id: El identificador único del producto.
+        nombre: El nombre del producto.
+        descripcion: La descripción del producto.
+        cantidad: La cantidad del producto en stock.
+        precio: El precio del producto.
+    """  
+    def __init__(self, id, nombre, descripcion, cantidad, precio):
+        """
+        Constructor de la clase Producto.
+
+        Argumentos:
+            id: El identificador único del producto.
+            nombre: El nombre del producto.
+            descripcion: La descripción del producto.
+            cantidad: La cantidad del producto en stock.
+            precio: El precio del producto.
+        """
+        self.id = id
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.cantidad = cantidad
+        self.precio = precio
+
+    def get_id(self):
+        """
+        Obtiene el identificador único del producto.
+
+        Retorno:
+            El identificador único del producto.
+        """
+        return self.id
+
+    def set_id(self, id):
+        """
+        Establece el identificador único del producto.
+
+        Argumento:
+            id: El nuevo identificador único del producto.
+        """
+        self.id = id
+
+    def get_nombre(self):
+        """
+        Obtiene el nombre del producto.
+
+        Retorno:
+            El nombre del producto.
+        """
+        return self.nombre
+
+    def set_nombre(self, nombre):
+        """
+        Establece el nombre del producto.
+
+        Argumento:
+            nombre: El nuevo nombre del producto.
+        """
+        self.nombre = nombre
+
+    def get_descripcion(self):
+        """
+        Obtiene la descripción del producto.
+
+        Retorno:
+            La descripción del producto.
+        """ 
+        return self.descripcion
+
+    def set_descripcion(self, descripcion):
+        """
+        Establece la descripción del producto.
+
+        Argumento:
+            descripcion: La nueva descripción del producto.
+        """
+        self.descripcion = descripcion
+
+    def get_cantidad(self):
+        """
+        Obtiene la cantidad del producto en stock.
+
+        Retorno:
+            La cantidad del producto en stock.
+        """
+        return self.cantidad
+
+    def set_cantidad(self, cantidad):
+        """
+        Establece la cantidad del producto en stock.
+
+        Argumento:
+            cantidad: La nueva cantidad del producto en stock.
+        """
+        self.cantidad = cantidad
+
+    def get_precio(self):
+        """
+        Obtiene el precio del producto.
+
+        Retorno:
+            El precio del producto.
+        """
+        return self.precio
+
+    def set_precio(self, precio):
+        """
+        Establece el precio del producto.
+
+        Argumento:
+            precio: El nuevo precio del producto.
+        """
+        self.precio = precio
+
+    def __str__(self):
+        """
+        Representación en cadena del producto.
+
+        Retorno:
+            Una cadena que representa el producto.
+        """
+        return f"ID: {self.id}, Nombre: {self.nombre}, Descripción: {self.descripcion}, Cantidad: {self.cantidad}, Precio: {self.precio}"
+
+
+class Inventario:
+    """
+    Clase que representa un inventario de productos.
+
+    Atributos:
+        productos: Un diccionario que mapea los identificadores de los productos a los objetos Producto.
+    """
+
+    def __init__(self):
+        """
+        Constructor de la clase Inventario.
+        """
+        self.productos = {}
+
+    def agregar_producto(self, producto):
+        """
+        Agrega un producto al inventario.
+
+        Argumento:
+            producto: El producto que se va a agregar.
+
+        Excepciones:
+            ValueError: Si el producto ya existe en el inventario.
+        """
+        if producto.get_id() in self.productos:
+            raise ValueError(f"El producto con ID {producto.get_id()} ya existe en el inventario.")
+        self.productos[producto.get_id()] = producto
+
+    def eliminar_producto(self, id_producto):
+        """
+        Elimina un producto del inventario.
+
+        Argumento:
+            id_producto: El identificador del producto que se va a eliminar.
+
+        Excepciones:
+            ValueError: Si el producto no existe en el inventario.
+        """
+        if id_producto not in self.productos:
+            raise ValueError(f"El producto con ID {id_producto} no existe en el inventario.")
+        del self.productos[id_producto]
+
+    def actualizar_producto(self, producto):
+        """
+    Actualiza un producto del inventario.
+    """
+        if producto.get_id() not in self.productos:
+            raise ValueError(f"El producto con ID {producto.get_id()} no existe en el inventario.")
+        
+        # Validación de datos
+        if not producto.get_nombre():
+            raise ValueError("El nombre del producto no puede estar vacío.")
+        if not producto.get_descripcion():
+            raise ValueError("La descripción del producto no puede estar vacía.")
+        if producto.get_cantidad() < 0:
+            raise ValueError("La cantidad del producto no puede ser negativa.")
+        if producto.get_precio() < 0:
+            raise ValueError("El precio del producto no puede ser negativo.")
+
+        # Permitir la actualización de campos específicos
+        opcion = input("¿Desea actualizar todos los campos del producto? (y/n): ")
+        if opcion.lower() == "n":
+            campos_a_actualizar = []
+            if input("¿Desea actualizar el nombre? (y/n): ").lower() == "y":
+                campos_a_actualizar.append("nombre")
+            if input("¿Desea actualizar la descripción? (y/n): ").lower() == "y":
+                campos_a_actualizar.append("descripcion")
+            if input("¿Desea actualizar la cantidad? (y/n): ").lower() == "y":
+                campos_a_actualizar.append("cantidad")
+            if input("¿Desea actualizar el precio? (y/n): ").lower() == "y":
+                campos_a_actualizar.append("precio")
+
+            for campo in campos_a_actualizar:
+                setattr(producto, campo, input(f"Ingrese el nuevo valor para {campo}: "))
+
+        # Confirmación de la actualización
+        print(f"\nResumen de la actualización:")
+        print(f"ID: {producto.get_id()}")
+        print(f"Nombre: {producto.get_nombre()}")
+        print(f"Descripción: {producto.get_descripcion()}")
+        print(f"Cantidad: {producto.get_cantidad()}")
+        print(f"Precio: {producto.get_precio()}")
+
+        opcion = input("¿Desea confirmar la actualización? (y/n): ")
+        if opcion.lower() == "y":
+            self.productos[producto.get_id()] = producto
+            print("Producto actualizado exitosamente")
+        else:
+            print("Actualización cancelada.")
+
+    def buscar_producto(self, id_producto):
+        """
+    Busca un producto en el inventario por su identificador.
+
+    Argumento:
+        id_producto: El identificador del producto que se busca.
+    """
+        return self.productos.get(id_producto)
+
+    def listar_productos(self):
+        """
+    Lista todos los productos del inventario.
+    """
+        for producto in self.productos.values():
+            print(producto)
+
+    def obtener_cantidad_total(self):
+        """
+    Obtiene la cantidad total de productos en el inventario.
+
+    Retorno:
+        La cantidad total de productos en el inventario.
+    """
+        cantidad_total = 0
+        for producto in self.productos.values():
+            cantidad_total += producto.get_cantidad()
+        return cantidad_total
+
+    def obtener_valor_total(self):
+        """
+    Obtiene el valor total del inventario.
+
+    Retorno:
+        El valor total del inventario.
+    """
+        valor_total = 0
+        for producto in self.productos.values():
+            valor_total += producto.get_cantidad() * producto.get_precio()
+        return valor_total
+
+
+
+def menu():
+    """
+    Muestra el menú principal del sistema de gestión de inventario.
+    """
+    while True:
+        print("\n**Sistema de gestión de inventario**")
+        print("1. Agregar producto")
+        print("2. Eliminar producto")
+        print("3. Actualizar producto")
+        print("4. Buscar producto")
+        print("5. Listar productos")
+        print("6. Obtener cantidad total")
+        print("7. Obtener valor total")
+        print("8. Salir")
+
+        opcion = int(input("Ingrese una opción: "))
+
+        if opcion == 1:
+            try:
+                id = int(input("Ingrese el ID del producto: "))
+                nombre = input("Ingrese el nombre del producto: ")
+                descripcion = input("Ingrese la descripción del producto: ")
+                cantidad = int(input("Ingrese la cantidad del producto: "))
+                precio = float(input("Ingrese el precio del producto: "))
+                producto = Producto(id, nombre, descripcion, cantidad, precio)
+                inventario.agregar_producto(producto)
+                print("Producto agregado exitosamente")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == 2:
+            try:
+                id_producto = int(input("Ingrese el ID del producto a eliminar: "))
+                inventario.eliminar_producto(id_producto)
+                print("Producto eliminado exitosamente")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == 3:
+            try:
+                id = int(input("Ingrese el ID del producto a actualizar: "))
+                inventario.actualizar_producto(producto)
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == 4:
+            try:
+                id_producto = int(input("Ingrese el ID del producto a buscar: "))
+                producto = inventario.buscar_producto(id_producto)
+                if producto is None:
+                    print(f"Producto con ID {id_producto} no encontrado.")
+                else:
+                    print(f"Producto encontrado: {producto}")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == 5:
+            if not inventario.productos:
+                print("No existen productos en inventario")
+            else:
+                inventario.listar_productos()
+
+        elif opcion == 6:
+            cantidad_total = inventario.obtener_cantidad_total()
+            print(f"Cantidad total de productos: {cantidad_total}")
+
+        elif opcion == 7:
+            valor_total = inventario.obtener_valor_total()
+            print(f"Valor total del inventario: {valor_total}")
+
+        elif opcion == 8:
+            print("¡Gracias por usar el sistema de gestión de inventario!")
+            break
+
+        else:
+            print("Opción inválida. Ingrese un número del 1 al 8.")
+
+if __name__ == "__main__":
+    inventario = Inventario()
+    menu()
